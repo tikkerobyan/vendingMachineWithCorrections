@@ -13,29 +13,24 @@ import com.company.sweet.Twix;
 import com.company.command.Comand;
 import com.company.user.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class VendingMachine {
 
-    private HashMap<String, ArrayList<LinkedList<Products>>> products;
+    private HashMap<String, ArrayList<Queue<Products>>> products;
 
-    public VendingMachine(HashMap<String, ArrayList<LinkedList<Products>>> products) {
-        this.products = products;
-    }
 
     public VendingMachine() {
+        addProducts();
     }
 
-    public void addProducts() {
-        HashMap<String, ArrayList<LinkedList<Products>>> products = new HashMap<>();
+    private void addProducts() {
+        HashMap<String, ArrayList<Queue<Products>>> products = new HashMap<>();
 
-        ArrayList<LinkedList<Products>> softDrinks = new ArrayList<>();
-        LinkedList<Products> colas = new LinkedList<>();
-        LinkedList<Products> pepsis = new LinkedList<>();
-        LinkedList<Products> fantas = new LinkedList<>();
+        ArrayList<Queue<Products>> softDrinks = new ArrayList<>();
+        Queue<Products> colas = new LinkedList<>();
+        Queue<Products> pepsis = new LinkedList<>();
+        Queue<Products> fantas = new LinkedList<>();
 
         for (int i = 0; i < 10; i++) {
             Cola cola = new Cola(300);
@@ -50,10 +45,10 @@ public class VendingMachine {
         softDrinks.add(fantas);
 
 
-        ArrayList<LinkedList<Products>> chipses = new ArrayList<>();
-        LinkedList<Products> layses = new LinkedList<>();
-        LinkedList<Products> doritoses = new LinkedList<>();
-        LinkedList<Products> pringlses = new LinkedList<>();
+        ArrayList<Queue<Products>> chipses = new ArrayList<>();
+        Queue<Products> layses = new LinkedList<>();
+        Queue<Products> doritoses = new LinkedList<>();
+        Queue<Products> pringlses = new LinkedList<>();
 
         for (int i = 0; i < 10; i++) {
             Lays lays = new Lays(450);
@@ -68,10 +63,10 @@ public class VendingMachine {
         chipses.add(pringlses);
 
 
-        ArrayList<LinkedList<Products>> sweets = new ArrayList<>();
-        LinkedList<Products> kitkats = new LinkedList<>();
-        LinkedList<Products> snickerses = new LinkedList<>();
-        LinkedList<Products> twixes = new LinkedList<>();
+        ArrayList<Queue<Products>> sweets = new ArrayList<>();
+        Queue<Products> kitkats = new LinkedList<>();
+        Queue<Products> snickerses = new LinkedList<>();
+        Queue<Products> twixes = new LinkedList<>();
 
         for (int i = 0; i < 10; i++) {
             KitKat kitKat = new KitKat(200);
@@ -94,10 +89,13 @@ public class VendingMachine {
 
     public Products getProduct(Comand comand, User user) throws Exception {
         if (products.containsKey(comand.getRow())) {
-            if (user.getWallet().getMoney() >= products.get(comand.getRow()).get(comand.getCollons() - 1).get(0).getCoast()) {
-                products.get(comand.getRow()).get(comand.getCollons() - 1).remove(0);
-                user.getWallet().setMoney(user.getWallet().getMoney() - products.get(comand.getRow()).get(comand.getCollons() - 1).get(0).getCoast());
-                return products.get(comand.getRow()).get(comand.getCollons() - 1).get(0);
+            if (user.getWallet().getMoney() >= products.get(comand.getRow()).get(comand.getCollons() - 1).peek().getCoast()) {
+                if (products.get(comand.getRow()).get(comand.getCollons() - 1).isEmpty()) {
+                    System.out.println("Machine doesn't have that product !!");
+                } else {
+                    user.getWallet().setMoney(user.getWallet().getMoney() - products.get(comand.getRow()).get(comand.getCollons() - 1).peek().getCoast());
+                    return products.get(comand.getRow()).get(comand.getCollons() - 1).remove();
+                }
             } else throw new RuntimeException("No enough money");
         }
         throw new Exception("Incorrect Command");
@@ -105,11 +103,11 @@ public class VendingMachine {
 
     //region
 
-    public HashMap<String, ArrayList<LinkedList<Products>>> getProducts() {
+    public HashMap<String, ArrayList<Queue<Products>>> getProducts() {
         return products;
     }
 
-    public void setProducts(HashMap<String, ArrayList<LinkedList<Products>>> products) {
+    public void setProducts(HashMap<String, ArrayList<Queue<Products>>> products) {
         this.products = products;
     }
 
