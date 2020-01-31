@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         VendingMachine vendingMachine = new VendingMachine();
         try {
-            User user = new User(new Wallet(6000000));
+            User user = new User(new Wallet(6000));
             System.out.println(vendingMachine.getProduct(Converter.makeComand(), user));
             System.out.println(vendingMachine);
             System.out.println(user);
